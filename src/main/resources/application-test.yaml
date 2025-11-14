@@ -13,8 +13,7 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations:
-      - classpath:flyway/ddls
-      - classpath:flyway/datas
+      - classpath:db/migration
 
 management:
   endpoints:
