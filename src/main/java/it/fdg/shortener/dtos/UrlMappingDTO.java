@@ -1,14 +1,14 @@
 package it.fdg.shortener.dtos;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UrlMappingDTO {
     private Integer id;
     private String shortId;
