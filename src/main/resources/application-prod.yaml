@@ -1,0 +1,3 @@
+environment: prod
+server:
+  port: 8083
