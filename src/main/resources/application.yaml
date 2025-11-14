@@ -1,3 +1,9 @@
 spring:
   application:
     name: shortener
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true

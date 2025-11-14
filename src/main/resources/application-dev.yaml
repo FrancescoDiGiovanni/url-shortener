@@ -2,6 +2,26 @@ environment: dev
 server:
   port: 8081
 
+spring:
+  datasource:
+    url: jdbc:h2:mem:devdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations:
+      - classpath:flyway
+
+  h2:
+    console:
+      enabled: true
+
 management:
   endpoints:
     web:

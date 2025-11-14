@@ -2,6 +2,17 @@ envinronment: staging
 server:
   port: 8082
 
+spring:
+  datasource:
+    url: jdbc:mysql://staging-db:3306/shortener?useSSL=false&serverTimezone=UTC
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
 management:
   endpoints:
     web:

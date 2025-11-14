@@ -2,6 +2,17 @@ environment: prod
 server:
   port: 8083
 
+spring:
+  datasource:
+    url: jdbc:mysql://production-db:3306/shortener?useSSL=false&serverTimezone=UTC
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
 management:
   endpoints:
     web:
