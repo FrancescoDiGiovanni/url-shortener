@@ -5,4 +5,6 @@ import it.fdg.shortener.dtos.UrlMappingDTO;
 public interface ShortenerService {
     UrlMappingDTO getOriginalUrlFromShortId(String shortId);
     UrlMappingDTO getOriginalUrlFromShortUrl(String shortUrl);
+    String generateUniqueShortId();
+    UrlMappingDTO createShortUrl(String originalUrl);
 }

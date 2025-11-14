@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface UrlMappingRepository extends JpaRepository<UrlMapping, Integer> {
     Optional<UrlMapping> findByShortIdAndExpirationAfter(String shortId, LocalDateTime expirationAfter);
+    boolean existsByShortId(String shortId);
 }

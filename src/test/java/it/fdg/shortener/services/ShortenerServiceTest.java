@@ -3,6 +3,7 @@ package it.fdg.shortener.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.fdg.shortener.dtos.UrlMappingDTO;
 import it.fdg.shortener.entities.UrlMapping;
+import it.fdg.shortener.exceptions.ShortenerApiHttpStatusException;
 import it.fdg.shortener.repositories.UrlMappingRepository;
 import it.fdg.shortener.services.impls.ShortenerServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -90,5 +91,78 @@ public class ShortenerServiceTest {
         UrlMappingDTO urlMappingDTO = shortenerService.getOriginalUrlFromShortUrl("http://localhost:8081/");
 
         assertNull(urlMappingDTO);
+    }
+
+    @Test
+    void createShortUrl_test001_givenOriginalUrl_Success() {
+        String originalUrl = "http://foo.com";
+        String generatedId = "10";
+
+        when(urlMappingRepository.existsByShortId(anyString()))
+                .thenReturn(false);
+
+        UrlMapping newUrlMapping = new UrlMapping();
+        newUrlMapping.setId(1);
+        newUrlMapping.setShortId(generatedId);
+        newUrlMapping.setOriginalUrl(originalUrl);
+        newUrlMapping.setExpiration(LocalDateTime.now().plusDays(30));
+
+        when(urlMappingRepository.save(any(UrlMapping.class)))
+                .thenReturn(newUrlMapping);
+
+        UrlMappingDTO dto = UrlMappingDTO.builder()
+                .id(1)
+                .shortId(generatedId)
+                .originalUrl(originalUrl)
+                .build();
+
+        when(objectMapper.convertValue(any(), eq(UrlMappingDTO.class)))
+                .thenReturn(dto);
+
+        UrlMappingDTO result = shortenerService.createShortUrl(originalUrl);
+
+        assertNotNull(result);
+        assertEquals(generatedId, result.getShortId());
+        assertEquals(originalUrl, result.getOriginalUrl());
+    }
+
+    @Test
+    void createShortUrl_test002_givenOriginalUrlAndShortIdCollisionOccurred_Regenerate() {
+        when(urlMappingRepository.existsByShortId(anyString()))
+                .thenReturn(true)
+                .thenReturn(false);
+
+        UrlMapping savedUrl = new UrlMapping();
+        savedUrl.setId(1);
+        savedUrl.setShortId("10");
+        savedUrl.setOriginalUrl("https://foo.com");
+
+        when(urlMappingRepository.save(any())).thenReturn(savedUrl);
+
+        when(objectMapper.convertValue(any(), eq(UrlMappingDTO.class)))
+                .thenReturn(UrlMappingDTO.builder()
+                        .id(1)
+                        .shortId("10")
+                        .originalUrl("https://foo.com")
+                        .build());
+
+        UrlMappingDTO result = shortenerService.createShortUrl("https://foo.com");
+
+        assertNotNull(result);
+        assertEquals("10", result.getShortId());
+
+        verify(urlMappingRepository, times(2)).existsByShortId(anyString());
+    }
+
+    @Test
+    void createShortUrl_test003_givenOriginalUrlNull_throwException() {
+        assertThrows(ShortenerApiHttpStatusException.class,
+                () -> shortenerService.createShortUrl(null));
+    }
+
+    @Test
+    void createShortUrl_test004_originalUrlBlank_throwException() {
+        assertThrows(ShortenerApiHttpStatusException.class,
+                () -> shortenerService.createShortUrl(" "));
     }
 }
